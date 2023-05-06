@@ -1,9 +1,12 @@
 package com.smalldogg.study.cpapp2
 
+import android.content.ContentValues
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.smalldogg.study.cpapp2.databinding.ActivityMainBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var b : ActivityMainBinding
@@ -43,6 +46,52 @@ class MainActivity : AppCompatActivity() {
                 b.textView.append("floatData : $floatData\n")
                 b.textView.append("dateData : $dateData\n")
             }
+        }
+
+        b.i.setOnClickListener {
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val now = sdf.format(Date())
+
+            val cv1 = ContentValues()
+            cv1.put("textData", "문자열1")
+            cv1.put("intData", 11)
+            cv1.put("floatData", 11.11)
+            cv1.put("dateData", now)
+
+            val cv2 = ContentValues()
+            cv2.put("textData", "문자열2")
+            cv2.put("intData", 22)
+            cv2.put("floatData", 22.22)
+            cv2.put("dateData", now)
+
+            val uri = Uri.parse("content://com.smalldogg.dbprovider")
+            contentResolver.insert(uri, cv1)
+            contentResolver.insert(uri, cv2)
+
+            b.textView.text = "저장 완료"
+        }
+
+        b.u.setOnClickListener {
+            val cv = ContentValues()
+
+            cv.put("textData", "문자열100")
+            val where = "idx = ?"
+            val args = arrayOf("1")
+
+            val uri = Uri.parse("content://com.smalldogg.dbprovider")
+            contentResolver.update(uri, cv, where, args)
+
+            b.textView.text = "수정 완료"
+
+        }
+
+        b.d.setOnClickListener {
+            val where = "idx = ?"
+            val args = arrayOf("1")
+
+            val uri = Uri.parse("content://com.smalldogg.dbprovider")
+            contentResolver.delete(uri, where, args)
+            b.textView.text = "삭제 완료"
         }
     }
 }
